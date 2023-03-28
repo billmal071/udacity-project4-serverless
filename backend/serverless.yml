@@ -8,7 +8,7 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
-  # - serverless-reqvalidator-plugin
+  - serverless-reqvalidator-plugin
   # - serverless-aws-documentation
 
 provider:
@@ -62,6 +62,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestValidator
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
@@ -81,6 +82,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestValidator
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
@@ -106,6 +108,7 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestValidator
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
@@ -128,6 +131,7 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestValidator
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
@@ -147,6 +151,7 @@ functions:
           path: todos/{todoId}/attachment
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestValidator
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
@@ -158,6 +163,14 @@ functions:
 
 resources:
   Resources:
+    RequestValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'RequestValidator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: true
     # Add necessary AWS resources. You will need at least the following AWS resources
     # TODO: Fill the properties
     # Feel free to change the names as you like. 
